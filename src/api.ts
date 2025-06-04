@@ -7,7 +7,7 @@ export interface TicTacToeApi {
 }
 
 export class InMemoryTicTacToeApi implements TicTacToeApi {
-    private games: Map<string, GameState>
+    private games: Map<string, GameState> = new Map()
 
     async createGame(): Promise<GameState> {
         const game = CreateGameState()
@@ -24,23 +24,19 @@ export class InMemoryTicTacToeApi implements TicTacToeApi {
     }
 
     async makeMove(gameId: string, row: number, col: number): Promise<GameState> {
-        // same start as getGame, find it by id
-        const game = await this.getGame(gameId)
-        // then, how do we make a move on said game?
-        // logic lives within game.ts, we have the function makeGameMove()
-        // take the row and column we were given and pass into function along with gameid
-        // first, make a copy for immutability
-        const newGame = makeGameMove(game, row, col)
-        // the new game with new move made, we need to save to the matching gameId
-        this.games.set(gameId, newGame)
-        // finally, return the newGame
-        return newGame
+        const game = this.games.get(gameId)
+        if (!game) {
+            throw new Error("Game not found")
+        }
+        const updatedGame = makeGameMove(game, row, col)
+        this.games.set(gameId, updatedGame)
+        return updatedGame
     }
 }
 
 export class ClientTicTacToeApi implements TicTacToeApi {
     async createGame(): Promise<GameState> {
-        const response = await fetch("/api/games", {
+        const response = await fetch("/api/game", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -49,15 +45,15 @@ export class ClientTicTacToeApi implements TicTacToeApi {
         const game = await response.json()
         return game
     }
-    
+
     async getGame(gameId: string): Promise<GameState> {
-        const response = await fetch(`/api/games/${gameId}`)
+        const response = await fetch(`/api/game/${gameId}`)
         const game = await response.json()
         return game
     }
 
     async makeMove(gameId: string, row: number, col: number): Promise<GameState> {
-        const response = await fetch(`/api/games/${gameId}/move`, {
+        const response = await fetch(`/api/game/${gameId}/move`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
