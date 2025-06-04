@@ -26,7 +26,7 @@ app.post('/api/games', (request, response) => {
     // create new game with initialGameState
     const newGame = initialGameState()
     // add new game to games object
-    games[newId] = newGame
+        //games[newId] = newGame
     // send game back to client
     response.json({ newGame, newId })
 })

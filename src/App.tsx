@@ -36,6 +36,7 @@ function App() {
       })
   }
 
+  
   return (
     <div className="game-board">
       <h1>Tic-Tac-Toe</h1>
