@@ -11,7 +11,7 @@ export type Game = {
     endState?: EndState,
 }
 
-export const initialGameState = (): Game => {
+export const createGame = (): Game => {
     return {
         board: [null, null, null, null, null, null, null, null, null],
         currentPlayer: 'x',
@@ -42,7 +42,7 @@ function calculateEndState(game: Game): EndState {
     return undefined
 }
 
-export function move(game: Game, position: CellIndex): Game {
+export function makeMove(game: Game, position: CellIndex): Game {
     if (game.board[position] != null) {
         console.log('that move is already taken!')
         return game

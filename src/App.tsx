@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import './App.css'
-import { initialGameState, move, type CellIndex } from './game'
+import { createGame, makeMove, type CellIndex } from './game'
+import { ClientTicTacToeApi } from './api.ts'
 
+const api = new ClientTicTacToeApi()
 
 function App() {
-  const [game, setGame] = useState(initialGameState())
+  const [game, setGame] = useState(createGame())
   const [message, setMessage] = useState('')
 
   const cellClick = (index: CellIndex) => {
@@ -36,7 +38,21 @@ function App() {
       })
   }
 
-  
+  // create game
+  const createGameTest = () => {
+    api.createGame()
+      .then(game => {
+        console.log(game)
+        setMessage("Game created!")
+      })
+  }
+
+  // get game
+
+
+  // make move
+
+
   return (
     <div className="game-board">
       <h1>Tic-Tac-Toe</h1>
@@ -60,6 +76,7 @@ function App() {
         <p>Practice Buttons:</p>
         <button id="practice" onClick={getStuff}>{message}</button>
         <button id="practice" onClick={postStuff}>{message}</button>
+        <button onClick={createGameTest}>Create Game</button>
       </div>
     </div >
   )
