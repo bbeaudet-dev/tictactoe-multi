@@ -1,45 +1,22 @@
-import express from 'express'
-import ViteExpress from "vite-express"
-import { v4 as uuidv4 } from 'uuid'
-import { createGame, move } from './src/game.ts'
-
-const app = express()
+import express from "express";
+import ViteExpress from "vite-express";
+import { InMemoryTicTacToeApi } from "./src/api";
+const app = express();
 app.use(express.json())
-const port = 3000
+const api = new InMemoryTicTacToeApi()
 
-const games = {}
-
-// just for practice
-app.get('/api/test', (request, response) => {
-    response.json({ message: 'hello from server' })
+app.get("/message", (_, res) => res.send("Hello from express!"));
+app.get("/api/game/:gameId", async (req, res) => {
+    const game = await api.getGame(req.params.gameId)
+    res.json(game)
+})
+app.post("/api/game", async (req, res) => {
+    const game = await api.createGame()
+    res.json(game)
+})
+app.post("/api/game/:gameId/move", async (req, res) => {
+    const game = await api.makeMove(req.params.gameId, req.body.row, req.body.col)
+    res.json(game)
 })
 
-// just for practice
-app.post('/api/echo', (request, response) => {
-    response.json(request.body)
-})
-
-// POST to create a new game
-app.post('/api/games', (request, response) => {
-    // generate UUID (move to game?)
-    const newId = uuidv4()
-    // create new game with initialGameState
-    const newGame = { ...createGame(), id: newId }
-    // add new game to games object
-    games[newId] = newGame
-    // send game back to client
-    response.json(newGame)
-})
-
-// GET to retrive a game by ID
-app.get('/api/games/:id', (request, response) => {
-    // const id = request.params.id
-    // games.find(id => games.id === id)
-})
-
-// POST to make a move in a game
-app.post('/api/games/:id/moves', (request, response) => {
-
-})
-
-ViteExpress.listen(app, port, () => console.log(`Server is listening on port ${port}`))
+ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
