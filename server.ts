@@ -1,7 +1,7 @@
 import express from 'express'
 import ViteExpress from "vite-express"
 import { v4 as uuidv4 } from 'uuid'
-import { initialGameState, move } from './src/game.ts'
+import { createGame, move } from './src/game.ts'
 
 const app = express()
 app.use(express.json())
@@ -24,11 +24,11 @@ app.post('/api/games', (request, response) => {
     // generate UUID (move to game?)
     const newId = uuidv4()
     // create new game with initialGameState
-    const newGame = initialGameState()
+    const newGame = { ...createGame(), id: newId }
     // add new game to games object
-        //games[newId] = newGame
+    games[newId] = newGame
     // send game back to client
-    response.json({ newGame, newId })
+    response.json(newGame)
 })
 
 // GET to retrive a game by ID
